@@ -1,0 +1,308 @@
+{% extends 'base-triagem.html' %}
+
+{% block title %}Alterar Dados do Paciente{% endblock %}
+
+{% block content %}
+
+<div class="paciente-page">
+    <div class="form-card">
+
+        <h1>Novo paciente</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form action="{% url 'alterar_dados' paciente.codigo_paciente %}" method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label for="nome">Nome do paciente</label>
+                <input
+                    type="text"
+                    name="nome"
+                    id="nome"
+                    required
+                    autocomplete="name"
+                    placeholder="Digite o nome do paciente"
+                    value="{{ paciente.nome }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="cpf">CPF</label>
+                <input
+                    type="text"
+                    name="cpf"
+                    id="cpf"
+                    required
+                    maxlength="14"
+                    inputmode="numeric"
+                    placeholder="000.000.000-00"
+                    value="{{ paciente.cpf }}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="data_nascimento">Data de nascimento</label>
+                <input
+                    type="date"
+                    name="data_nascimento"
+                    id="data_nascimento"
+                    value="{{ paciente.data_nascimento|date:'Y-m-d'}}"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="sintomas">Sintomas</label>
+                <textarea
+                    name="sintomas"
+                    id="sintomas"
+                    required
+                    placeholder="Digite os sintomas do paciente"
+                    required
+                > {{ paciente.sintomas }} </textarea>
+            </div>
+
+            <button type="submit">
+                Alterar dados
+            </button>
+
+        </form>
+
+    </div>
+</div>
+
+<style>
+    /* =========================
+       RESET
+    ========================= */
+
+    .paciente-page,
+    .paciente-page * {
+        box-sizing: border-box;
+    }
+
+    /* =========================
+       PÁGINA
+    ========================= */
+
+    .paciente-page {
+        width: 100%;
+        min-height: calc(100vh - 70px);
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 40px 20px;
+
+        background: #111827;
+        color: #ffffff;
+
+        font-family: Arial, sans-serif;
+    }
+
+    /* =========================
+       CARD
+    ========================= */
+
+    .paciente-page .form-card {
+        width: 100%;
+        max-width: 500px;
+
+        padding: 35px;
+
+        background: #1f2937;
+
+        border: 1px solid #374151;
+        border-radius: 15px;
+
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    /* =========================
+       TÍTULO
+    ========================= */
+
+    .paciente-page h1 {
+        margin: 0 0 25px;
+
+        color: #ffffff;
+
+        text-align: center;
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+    /* =========================
+       FORMULÁRIO
+    ========================= */
+
+    .paciente-page form {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 18px;
+    }
+
+    .paciente-page .form-group {
+        width: 100%;
+
+        display: flex;
+        flex-direction: column;
+
+        gap: 7px;
+    }
+
+    /* =========================
+       LABEL
+    ========================= */
+
+    .paciente-page label {
+        color: #d1d5db;
+
+        font-size: 14px;
+        font-weight: 500;
+    }
+
+    /* =========================
+       INPUTS
+    ========================= */
+
+    .paciente-page input,
+    .paciente-page textarea {
+        width: 100%;
+
+        padding: 12px 15px;
+
+        border: 1px solid #374151;
+        border-radius: 8px;
+
+        background: #111827;
+        color: #ffffff;
+
+        font-family: Arial, sans-serif;
+        font-size: 15px;
+
+        outline: none;
+
+        transition: 0.3s;
+    }
+
+    .paciente-page input {
+        height: 48px;
+    }
+
+    .paciente-page textarea {
+        min-height: 110px;
+
+        resize: vertical;
+    }
+
+    /* =========================
+       PLACEHOLDER
+    ========================= */
+
+    .paciente-page input::placeholder,
+    .paciente-page textarea::placeholder {
+        color: #9ca3af;
+    }
+
+    /* =========================
+       FOCO
+    ========================= */
+
+    .paciente-page input:focus,
+    .paciente-page textarea:focus {
+        border-color: #3b82f6;
+
+        box-shadow:
+            0 0 0 3px rgba(59, 130, 246, 0.2);
+    }
+
+    /* =========================
+       BOTÃO
+    ========================= */
+
+    .paciente-page button {
+        width: 100%;
+        height: 48px;
+
+        margin-top: 5px;
+
+        border: none;
+        border-radius: 8px;
+
+        background: #2563eb;
+        color: #ffffff;
+
+        font-size: 16px;
+        font-weight: bold;
+
+        cursor: pointer;
+
+        transition: 0.3s;
+    }
+
+    .paciente-page button:hover {
+        background: #1d4ed8;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 5px 15px rgba(37, 99, 235, 0.3);
+    }
+
+    .paciente-page button:active {
+        transform: translateY(0);
+    }
+
+    /* =========================
+       MENSAGEM DE ERRO
+    ========================= */
+
+    .paciente-page .error {
+        width: 100%;
+
+        margin: 0 0 20px;
+        padding: 12px;
+
+        border: 1px solid #991b1b;
+        border-radius: 8px;
+
+        background: #7f1d1d;
+        color: #fecaca;
+
+        text-align: center;
+        font-size: 14px;
+    }
+
+    /* =========================
+       RESPONSIVIDADE
+    ========================= */
+
+    @media (max-width: 576px) {
+
+        .paciente-page {
+            min-height: calc(100vh - 60px);
+            padding: 25px 15px;
+        }
+
+        .paciente-page .form-card {
+            padding: 25px 20px;
+        }
+
+        .paciente-page h1 {
+            font-size: 25px;
+            margin-bottom: 20px;
+        }
+    }
+</style>
+
+{% endblock %}

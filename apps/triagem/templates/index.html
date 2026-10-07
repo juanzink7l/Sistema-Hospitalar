@@ -1,5 +1,938 @@
 {% extends 'base-triagem.html' %}
+
 {% block title %}Triagem | Home Page{% endblock %}
+
 {% block content %}
-    <h1 class="mt-5">Triagem | Home Page</h1>
+
+<div class="triagem-page">
+
+    <!-- CABEÇALHO -->
+    <div class="header-triagem">
+
+        <h1>Triagem</h1>
+
+        <p>
+            Olá, <strong>{{ user.username }}</strong> 👋
+        </p>
+
+        <span>
+            Gerenciamento de pacientes
+        </span>
+
+    </div>
+
+
+    <!-- TÍTULO -->
+    <div class="section-title">
+
+        <div>
+            <h2>Lista de Pacientes</h2>
+            <p>Pacientes cadastrados no sistema</p>
+        </div>
+
+        <div class="line"></div>
+
+    </div>
+
+
+    {% if pacientes %}
+
+    <!-- ÁREA DOS CARDS -->
+    <div class="cards-window">
+
+        <div class="cards-track">
+
+            <!-- PRIMEIRA LISTA -->
+            {% for paciente in pacientes %}
+
+            <div class="paciente-card">
+
+                <!-- TOPO -->
+                <div class="card-top">
+
+                    <span class="codigo">
+                        #{{ paciente.codigo_paciente }}
+                    </span>
+
+                    <span class="status">
+                        ● Cadastrado
+                    </span>
+
+                </div>
+
+
+                <!-- AVATAR -->
+                <div class="avatar">
+                    {{ paciente.nome|first|upper }}
+                </div>
+
+
+                <!-- NOME -->
+                <h3>
+                    {{ paciente.nome }}
+                </h3>
+
+
+                <!-- INFORMAÇÕES -->
+                <div class="paciente-info">
+
+                    <div class="info-item">
+
+                        <span>CPF</span>
+
+                        <strong>
+                            {{ paciente.cpf }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span>Data de nascimento</span>
+
+                        <strong>
+                            {{ paciente.data_nascimento|date:"d/m/Y" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item sintomas">
+
+                        <span>Sintomas</span>
+
+                        <strong>
+                            {{ paciente.sintomas }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <!-- BOTÕES -->
+                <div class="card-actions">
+
+                    <a
+                        href="{% url 'alterar_dados' paciente.codigo_paciente %}"
+                        class="btn-alterar"
+                    >
+                        ✏ Alterar
+                    </a>
+
+
+                    <a
+                        href="{% url 'deletar_paciente' paciente.codigo_paciente %}"
+                        class="btn-excluir"
+                        onclick="return confirm('Tem certeza que deseja excluir este paciente?');"
+                    >
+                        🗑 Excluir
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+
+            <!-- SEGUNDA LISTA
+                 Necessária para criar o efeito
+                 de movimento contínuo -->
+
+            {% for paciente in pacientes %}
+
+            <div class="paciente-card">
+
+                <div class="card-top">
+
+                    <span class="codigo">
+                        #{{ paciente.codigo_paciente }}
+                    </span>
+
+                    <span class="status">
+                        ● Cadastrado
+                    </span>
+
+                </div>
+
+
+                <div class="avatar">
+                    {{ paciente.nome|first|upper }}
+                </div>
+
+
+                <h3>
+                    {{ paciente.nome }}
+                </h3>
+
+
+                <div class="paciente-info">
+
+                    <div class="info-item">
+
+                        <span>CPF</span>
+
+                        <strong>
+                            {{ paciente.cpf }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item">
+
+                        <span>Data de nascimento</span>
+
+                        <strong>
+                            {{ paciente.data_nascimento|date:"d/m/Y" }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="info-item sintomas">
+
+                        <span>Sintomas</span>
+
+                        <strong>
+                            {{ paciente.sintomas }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card-actions">
+
+                    <a
+                        href="{% url 'alterar_dados' paciente.codigo_paciente %}"
+                        class="btn-alterar"
+                    >
+                        ✏ Alterar
+                    </a>
+
+
+                    <a
+                        href="{% url 'deletar_paciente' paciente.codigo_paciente %}"
+                        class="btn-excluir"
+                        onclick="return confirm('Tem certeza que deseja excluir este paciente?');"
+                    >
+                        🗑 Excluir
+                    </a>
+
+                </div>
+
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+
+
+    {% else %}
+
+    <!-- SEM PACIENTES -->
+
+    <div class="empty">
+
+        <div class="empty-icon">
+            🩺
+        </div>
+
+        <h3>
+            Nenhum paciente cadastrado
+        </h3>
+
+        <p>
+            Nenhum paciente foi cadastrado na triagem ainda.
+        </p>
+
+    </div>
+
+    {% endif %}
+
+</div>
+
+
+<style>
+
+    /* =====================================
+       PÁGINA
+    ===================================== */
+
+    .triagem-page {
+
+        width: 100%;
+        min-height: calc(100vh - 70px);
+
+        padding: 45px 0;
+
+        background:
+            radial-gradient(
+                circle at 50% 0%,
+                #1e3a5f 0%,
+                #111827 45%,
+                #0b1120 100%
+            );
+
+        color: white;
+
+        overflow: hidden;
+
+        font-family: Arial, sans-serif;
+    }
+
+
+    /* =====================================
+       CABEÇALHO
+    ===================================== */
+
+    .header-triagem {
+
+        text-align: center;
+
+        margin-bottom: 45px;
+
+        padding: 0 20px;
+    }
+
+
+    .header-triagem h1 {
+
+        margin: 0 0 10px;
+
+        color: #ffffff;
+
+        font-size: 42px;
+        font-weight: 700;
+
+        text-shadow:
+            0 0 20px rgba(59, 130, 246, 0.3);
+    }
+
+
+    .header-triagem p {
+
+        margin: 0 0 5px;
+
+        color: #d1d5db;
+
+        font-size: 19px;
+    }
+
+
+    .header-triagem strong {
+
+        color: #60a5fa;
+    }
+
+
+    .header-triagem span {
+
+        color: #9ca3af;
+
+        font-size: 14px;
+    }
+
+
+    /* =====================================
+       TÍTULO DA LISTA
+    ===================================== */
+
+    .section-title {
+
+        width: 90%;
+        max-width: 1400px;
+
+        margin: 0 auto 20px;
+
+        display: flex;
+
+        align-items: flex-end;
+
+        justify-content: space-between;
+    }
+
+
+    .section-title h2 {
+
+        margin: 0 0 5px;
+
+        color: white;
+
+        font-size: 25px;
+        font-weight: 600;
+    }
+
+
+    .section-title p {
+
+        margin: 0;
+
+        color: #9ca3af;
+
+        font-size: 13px;
+    }
+
+
+    .line {
+
+        width: 60px;
+        height: 4px;
+
+        margin-bottom: 3px;
+
+        border-radius: 10px;
+
+        background: #3b82f6;
+
+        box-shadow:
+            0 0 12px rgba(59, 130, 246, 0.6);
+    }
+
+
+    /* =====================================
+       JANELA DOS CARDS
+    ===================================== */
+
+    .cards-window {
+
+        width: 100%;
+
+        overflow: hidden;
+
+        position: relative;
+
+        padding: 30px 0 50px;
+    }
+
+
+    /* EFEITO DE DESAPARECER NAS LATERAIS */
+
+    .cards-window::before,
+    .cards-window::after {
+
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        bottom: 0;
+
+        width: 160px;
+
+        z-index: 5;
+
+        pointer-events: none;
+    }
+
+
+    .cards-window::before {
+
+        left: 0;
+
+        background:
+            linear-gradient(
+                to right,
+                #111827,
+                transparent
+            );
+    }
+
+
+    .cards-window::after {
+
+        right: 0;
+
+        background:
+            linear-gradient(
+                to left,
+                #111827,
+                transparent
+            );
+    }
+
+
+    /* =====================================
+       LINHA DOS CARDS
+    ===================================== */
+
+    .cards-track {
+
+        display: flex;
+
+        width: max-content;
+
+        gap: 25px;
+
+        animation:
+            passarCards 45s linear infinite;
+    }
+
+
+    /* PAUSA AO PASSAR O MOUSE */
+
+    .cards-track:hover {
+
+        animation-play-state: paused;
+    }
+
+
+    /* =====================================
+       CARD
+    ===================================== */
+
+    .paciente-card {
+
+        width: 285px;
+        min-width: 285px;
+
+        padding: 22px;
+
+        background:
+            linear-gradient(
+                145deg,
+                #1f2937,
+                #111827
+            );
+
+        border: 1px solid #374151;
+
+        border-radius: 18px;
+
+        box-shadow:
+            0 15px 35px rgba(0, 0, 0, 0.35);
+
+        position: relative;
+
+        animation:
+            flutuar 4s ease-in-out infinite;
+
+        transition:
+            border-color 0.3s,
+            box-shadow 0.3s,
+            transform 0.3s;
+    }
+
+
+    .paciente-card:hover {
+
+        border-color: #3b82f6;
+
+        box-shadow:
+            0 20px 45px
+            rgba(37, 99, 235, 0.25);
+
+        transform:
+            translateY(-10px)
+            scale(1.03);
+
+        z-index: 10;
+    }
+
+
+    /* =====================================
+       TOPO
+    ===================================== */
+
+    .card-top {
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        margin-bottom: 15px;
+    }
+
+
+    .codigo {
+
+        padding: 5px 9px;
+
+        background: #111827;
+
+        border-radius: 6px;
+
+        color: #60a5fa;
+
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+
+    .status {
+
+        color: #4ade80;
+
+        font-size: 10px;
+        font-weight: bold;
+    }
+
+
+    /* =====================================
+       AVATAR
+    ===================================== */
+
+    .avatar {
+
+        width: 65px;
+        height: 65px;
+
+        margin: 5px auto 15px;
+
+        display: flex;
+
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background:
+            linear-gradient(
+                135deg,
+                #2563eb,
+                #7c3aed
+            );
+
+        color: white;
+
+        font-size: 25px;
+        font-weight: bold;
+
+        box-shadow:
+            0 8px 20px
+            rgba(37, 99, 235, 0.3);
+    }
+
+
+    /* =====================================
+       NOME
+    ===================================== */
+
+    .paciente-card h3 {
+
+        margin: 0 0 18px;
+
+        text-align: center;
+
+        color: white;
+
+        font-size: 19px;
+        font-weight: 600;
+
+        white-space: nowrap;
+
+        overflow: hidden;
+
+        text-overflow: ellipsis;
+    }
+
+
+    /* =====================================
+       INFORMAÇÕES
+    ===================================== */
+
+    .paciente-info {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 11px;
+
+        margin-bottom: 20px;
+    }
+
+
+    .info-item {
+
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 3px;
+    }
+
+
+    .info-item span {
+
+        color: #6b7280;
+
+        font-size: 10px;
+
+        text-transform: uppercase;
+
+        letter-spacing: 0.5px;
+    }
+
+
+    .info-item strong {
+
+        color: #d1d5db;
+
+        font-size: 12px;
+
+        font-weight: normal;
+
+        line-height: 1.4;
+    }
+
+
+    /* SINTOMAS */
+
+    .sintomas strong {
+
+        color: #fbbf24;
+
+        display: -webkit-box;
+
+        -webkit-line-clamp: 2;
+
+        -webkit-box-orient: vertical;
+
+        overflow: hidden;
+    }
+
+
+    /* =====================================
+       BOTÕES
+    ===================================== */
+
+    .card-actions {
+
+        display: flex;
+
+        gap: 8px;
+    }
+
+
+    .card-actions a {
+
+        flex: 1;
+
+        height: 38px;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        border-radius: 8px;
+
+        text-decoration: none;
+
+        font-size: 12px;
+
+        font-weight: bold;
+
+        transition: 0.3s;
+    }
+
+
+    /* ALTERAR */
+
+    .btn-alterar {
+
+        background: #2563eb;
+
+        color: white;
+    }
+
+
+    .btn-alterar:hover {
+
+        background: #1d4ed8;
+
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 5px 15px
+            rgba(37, 99, 235, 0.3);
+    }
+
+
+    /* EXCLUIR */
+
+    .btn-excluir {
+
+        background: #3f1d24;
+
+        color: #f87171;
+
+        border: 1px solid #7f1d1d;
+    }
+
+
+    .btn-excluir:hover {
+
+        background: #991b1b;
+
+        color: white;
+
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 5px 15px
+            rgba(239, 68, 68, 0.25);
+    }
+
+
+    /* =====================================
+       ANIMAÇÃO HORIZONTAL
+    ===================================== */
+
+    @keyframes passarCards {
+
+        from {
+
+            transform:
+                translateX(0);
+        }
+
+        to {
+
+            transform:
+                translateX(
+                    calc(-50% - 12.5px)
+                );
+        }
+    }
+
+
+    /* =====================================
+       ANIMAÇÃO FLUTUANTE
+    ===================================== */
+
+    @keyframes flutuar {
+
+        0%,
+        100% {
+
+            transform:
+                translateY(0);
+        }
+
+        50% {
+
+            transform:
+                translateY(-9px);
+        }
+    }
+
+
+    /* =====================================
+       NENHUM PACIENTE
+    ===================================== */
+
+    .empty {
+
+        width: 90%;
+        max-width: 500px;
+
+        margin: 70px auto;
+
+        padding: 45px 30px;
+
+        text-align: center;
+
+        background: #1f2937;
+
+        border: 1px solid #374151;
+
+        border-radius: 18px;
+
+        box-shadow:
+            0 15px 35px
+            rgba(0, 0, 0, 0.3);
+    }
+
+
+    .empty-icon {
+
+        margin-bottom: 15px;
+
+        font-size: 45px;
+    }
+
+
+    .empty h3 {
+
+        margin: 0 0 8px;
+
+        color: white;
+    }
+
+
+    .empty p {
+
+        margin: 0;
+
+        color: #9ca3af;
+    }
+
+
+    /* =====================================
+       RESPONSIVO
+    ===================================== */
+
+    @media (max-width: 768px) {
+
+        .triagem-page {
+
+            padding-top: 30px;
+        }
+
+
+        .header-triagem h1 {
+
+            font-size: 32px;
+        }
+
+
+        .section-title {
+
+            width: 85%;
+
+            align-items: flex-start;
+
+            flex-direction: column;
+        }
+
+
+        .paciente-card {
+
+            width: 260px;
+            min-width: 260px;
+        }
+
+
+        .cards-track {
+
+            gap: 18px;
+
+            animation-duration: 35s;
+        }
+
+
+        .cards-window::before,
+        .cards-window::after {
+
+            width: 60px;
+        }
+
+    }
+
+
+</style>
+
 {% endblock %}
